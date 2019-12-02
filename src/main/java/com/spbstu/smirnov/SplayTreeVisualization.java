@@ -4,13 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 
 
-
 public class SplayTreeVisualization extends JPanel {
 
     private SplayTreeSet splayTreeSet = new SplayTreeSet();
     private JTextField insertField = new JTextField(10);
     private JTextField removeField = new JTextField(10);
-    private JTextField  searchField = new JTextField(10);
+    private JTextField searchField = new JTextField(10);
     private JLabel insertLabel = new JLabel("Добавление");
     private JLabel removeLabel = new JLabel("Удаление");
     private JLabel searchLabel = new JLabel("Поиск");

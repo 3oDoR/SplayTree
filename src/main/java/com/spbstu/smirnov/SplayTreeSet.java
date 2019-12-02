@@ -177,10 +177,10 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
             return;
         }
 
-        if((node.left != null) && (node.right !=null)) {
+        if ((node.left != null) && (node.right != null)) {
             Node min = node.left;
 
-            while(min.right != null) {
+            while (min.right != null) {
                 min = min.right;
             }
             min.right = node.right;
@@ -190,7 +190,7 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         } else if (node.right != null) {
             node.right.parent = null;
             root = node.right;
-        } else if( node.left !=null) {
+        } else if (node.left != null) {
             node.left.parent = null;
             root = node.left;
         } else {

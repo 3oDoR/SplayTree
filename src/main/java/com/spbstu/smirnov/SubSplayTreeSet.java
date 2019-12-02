@@ -133,7 +133,7 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public void clear() {
-
+        return;
     }
 
     private class SubSplayTreeSetIterator implements Iterator<E> {
