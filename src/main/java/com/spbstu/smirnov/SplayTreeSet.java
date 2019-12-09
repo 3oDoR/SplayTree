@@ -25,9 +25,12 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
     Node<E> root = null;
     private int size = 0;
 
-    public void insert(E element) {
+    public boolean insert(E element) {
         if (element == null) {
-            return;
+            return false;
+        }
+        if (contains(element)) {
+            return false;
         }
 
         Node<E> addedElement = root;
@@ -52,7 +55,9 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         }
         splay(addedElement);
         size++;
+        return true;
     }
+
 
     private void makeRightChildParent(Node<E> child, Node<E> parent) {
         if ((child == null) || (parent == null) || (parent.right != child) || (child.parent != parent)) {
@@ -139,7 +144,6 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         Node<E> parent = null;
 
         if (root == null || searchElement == null) {
-//            throw new IllegalArgumentException();
             return null;
         }
         while (current.element.compareTo(searchElement) != 0) {
@@ -148,6 +152,7 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
                 parent = current;
                 current = current.right;
                 if (current == null) {
+                    splay(parent);
                     return null;
                 }
             }
@@ -155,6 +160,7 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
                 parent = current;
                 current = current.left;
                 if (current == null) {
+                    splay(parent);
                     return null;
                 }
             }
@@ -162,9 +168,6 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         if (searchElement.compareTo(current.element) == 0) {
             splay(current);
             return current;
-        }
-        if (parent != null) {
-            splay(parent);
         }
         return null;
     }
@@ -211,9 +214,31 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
 
     @Override
     public boolean contains(Object o) {
-        E ele = (E) o;
-        Node<E> closest = search(ele);
-        return closest != null && ele.compareTo(closest.element) == 0;
+        E searchElement = (E) o;
+        Node<E> current = root;
+
+        if (root == null || searchElement == null) {
+            return false;
+        }
+        while (current.element.compareTo(searchElement) != 0) {
+
+            if (searchElement.compareTo(current.element) > 0) {
+                current = current.right;
+                if (current == null) {
+                    return false;
+                }
+            }
+            if (searchElement.compareTo(current.element) < 0) {
+                current = current.left;
+                if (current == null) {
+                    return false;
+                }
+            }
+        }
+        if (searchElement.compareTo(current.element) == 0) {
+            return true;
+        }
+        return false;
     }
 
 
@@ -306,9 +331,7 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
             if (node.right != null) {
                 Node<E> right = node.right;
                 while (right != null) {
-                    if (!stack.contains(right)) {
                         stack.push(right);
-                    }
                     right = right.left;
                 }
             }

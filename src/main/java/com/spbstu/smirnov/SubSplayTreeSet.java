@@ -37,29 +37,45 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
     @NotNull
     @Override
     public SortedSet<E> subSet(E e, E e1) {
-        return null;
+        return new SubSplayTreeSet<E>(tree, e, e1);
     }
 
     @NotNull
     @Override
     public SortedSet<E> headSet(E e) {
-        return null;
+        return new SubSplayTreeSet<E>(tree, null, e);
     }
 
     @NotNull
     @Override
     public SortedSet<E> tailSet(E e) {
-        return null;
+        return new SubSplayTreeSet<E>(tree, e, null);
     }
 
     @Override
     public E first() {
-        return null;
+        Iterator subSpayIterator = tree.iterator();
+        E first = null;
+        while (iterator().hasNext()) {
+            if (inRange(iterator().next()) && iterator().next().compareTo(first) < 0) {
+                first = iterator().next();
+            }
+            iterator().next();
+        }
+        return first;
     }
 
     @Override
     public E last() {
-        return null;
+        Iterator subSpayIterator = tree.iterator();
+        E last = null;
+        while (iterator().hasNext()) {
+            if (inRange(iterator().next()) && iterator().next().compareTo(last) > 0) {
+                last = iterator().next();
+            }
+            iterator().next();
+        }
+        return last;
     }
 
     @Override
@@ -75,18 +91,21 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return tree.root != null;
     }
 
     @Override
     public boolean contains(Object o) {
+        if (inRange((E) o)) {
+            return tree.contains(o);
+        }
         return false;
     }
 
     @NotNull
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new SubSplayTreeSetIterator();
     }
 
     @NotNull
@@ -103,11 +122,18 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public boolean add(E e) {
-        return false;
+       if (inRange(e)) {
+           return tree.add(e);
+       }
+       return false;
     }
 
     @Override
     public boolean remove(Object o) {
+        E removeItem = (E) o;
+        if (inRange(removeItem)) {
+            return tree.add(removeItem);
+        }
         return false;
     }
 
@@ -133,7 +159,9 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public void clear() {
-        return;
+        tree.root.right = null;
+        tree.root.left = null;
+        tree.root = null;
     }
 
     private class SubSplayTreeSetIterator implements Iterator<E> {
