@@ -3,10 +3,7 @@ package main.java.com.spbstu.smirnov;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.*;
 
 public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
@@ -54,26 +51,32 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public E first() {
-        Iterator subSpayIterator = tree.iterator();
         E first = null;
-        while (iterator().hasNext()) {
-            if (inRange(iterator().next()) && iterator().next().compareTo(first) < 0) {
-                first = iterator().next();
+        for (E e : tree) {
+            if (inRange(e)) {
+                if (first == null) {
+                    first = e;
+                }
+                if (first.compareTo(e) < 0) {
+                    first = e;
+                }
             }
-            iterator().next();
         }
         return first;
     }
 
     @Override
     public E last() {
-        Iterator subSpayIterator = tree.iterator();
         E last = null;
-        while (iterator().hasNext()) {
-            if (inRange(iterator().next()) && iterator().next().compareTo(last) > 0) {
-                last = iterator().next();
+        for (E e : tree) {
+            if (inRange(e)) {
+                if (last == null) {
+                    last = e;
+                }
+                if (last.compareTo(e) > 0) {
+                    last = e;
+                }
             }
-            iterator().next();
         }
         return last;
     }
@@ -91,7 +94,7 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public boolean isEmpty() {
-        return tree.root != null;
+        return tree.getRoot() != null;
     }
 
     @Override
@@ -111,7 +114,15 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
     @NotNull
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] massive = new Object[size()];
+        int count = 0;
+        for (E e : tree) {
+            if (inRange(e)) {
+                massive[count] = e;
+            }
+            count++;
+        }
+        return massive;
     }
 
     @NotNull
@@ -122,46 +133,76 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public boolean add(E e) {
-       if (inRange(e)) {
-           return tree.add(e);
-       }
-       return false;
+        if (inRange(e)) {
+            return tree.add(e);
+        }
+        return false;
     }
 
     @Override
     public boolean remove(Object o) {
         E removeItem = (E) o;
         if (inRange(removeItem)) {
-            return tree.add(removeItem);
+            if (tree.contains(removeItem)) {
+                tree.remove(removeItem);
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> collection) {
-        return false;
+        for (Object e : collection) {
+            E elements = (E) e;
+            if (inRange(elements)) {
+                if (!contains(elements))
+                    return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends E> collection) {
-        return false;
+        for (Object e : collection) {
+            E elements = (E) e;
+            if (inRange(elements)) {
+                tree.add(elements);
+            } else return false;
+        }
+        return true;
     }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> collection) {
-        return false;
+        for (Object e : collection) {
+            E elements = (E) e;
+            if (inRange(elements)) {
+                if (!contains(elements)) {
+                    remove(elements);
+                }
+            } else return false;
+        }
+        return true;
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> collection) {
-        return false;
+        for (Object e : collection) {
+            E elements = (E) e;
+            if (inRange(elements)) {
+                if (contains(elements)) {
+                    remove(elements);
+                }
+            } else return false;
+        }
+        return true;
     }
 
     @Override
     public void clear() {
-        tree.root.right = null;
-        tree.root.left = null;
-        tree.root = null;
+        return;
     }
 
     private class SubSplayTreeSetIterator implements Iterator<E> {
@@ -180,7 +221,7 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
         @Override
         public boolean hasNext() {
-            return iterator.hasNext();
+            return next != null;
         }
 
         @Override
@@ -190,6 +231,11 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
                 next = iterator.next();
             } else next = null;
             return result;
+        }
+
+        @Override
+        public void remove() {
+            iterator.remove();
         }
     }
 }

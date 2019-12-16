@@ -37,7 +37,7 @@ public class SplayTreeVisualization extends JPanel {
         });
 
         searchField.addActionListener(actionEvent -> {
-            splayTreeSet.find(actionEvent.getActionCommand());
+            splayTreeSet.contains(actionEvent.getActionCommand());
             System.out.println(splayTreeSet.size());
         });
 

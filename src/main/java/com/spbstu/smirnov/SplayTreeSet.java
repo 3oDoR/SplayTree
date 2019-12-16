@@ -20,16 +20,24 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
             this.parent = parent;
             this.element = element;
         }
+
+        public String toString() {
+            return element.toString();
+        }
     }
 
-    Node<E> root = null;
+    private Node<E> root = null;
     private int size = 0;
+
+    public Node<E> getRoot() {
+        return root;
+    }
 
     public boolean insert(E element) {
         if (element == null) {
             return false;
         }
-        if (contains(element)) {
+        if (search(element) != null) {
             return false;
         }
 
@@ -134,10 +142,6 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         root = splayNode;
     }
 
-    public boolean find(E searchElement) {
-        return search(searchElement) != null;
-    }
-
     private Node<E> search(E searchElement) {
 
         Node<E> current = root;
@@ -146,8 +150,12 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         if (root == null || searchElement == null) {
             return null;
         }
+        //Если элемент который мы ищем - корень
+        if (searchElement.compareTo(current.element) == 0) {
+            splay(current);
+            return current;
+        }
         while (current.element.compareTo(searchElement) != 0) {
-
             if (searchElement.compareTo(current.element) > 0) {
                 parent = current;
                 current = current.right;
@@ -164,19 +172,19 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
                     return null;
                 }
             }
-        }
-        if (searchElement.compareTo(current.element) == 0) {
-            splay(current);
-            return current;
+            if (searchElement.compareTo(current.element) == 0) {
+                splay(current);
+                return current;
+            }
         }
         return null;
     }
 
-    private void remove(E element) {
+    public void remove(E element) {
 
         Node node = search(element);
 
-        if (element == null) {
+        if (element == null || node == null) {
             return;
         }
 
@@ -214,29 +222,40 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
 
     @Override
     public boolean contains(Object o) {
-        E searchElement = (E) o;
         Node<E> current = root;
+        Node<E> parent = null;
+        E searchElement = (E) o;
 
         if (root == null || searchElement == null) {
             return false;
         }
-        while (current.element.compareTo(searchElement) != 0) {
+        //Если элемент который мы ищем - корень
+        if (searchElement.compareTo(current.element) == 0) {
+            splay(current);
+            return true;
+        }
 
+        while (current.element.compareTo(searchElement) != 0) {
             if (searchElement.compareTo(current.element) > 0) {
+                parent = current;
                 current = current.right;
                 if (current == null) {
+                    splay(parent);
                     return false;
                 }
             }
             if (searchElement.compareTo(current.element) < 0) {
+                parent = current;
                 current = current.left;
                 if (current == null) {
+                    splay(parent);
                     return false;
                 }
             }
-        }
-        if (searchElement.compareTo(current.element) == 0) {
-            return true;
+            if (searchElement.compareTo(current.element) == 0) {
+                splay(current);
+                return true;
+            }
         }
         return false;
     }
@@ -331,7 +350,7 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
             if (node.right != null) {
                 Node<E> right = node.right;
                 while (right != null) {
-                        stack.push(right);
+                    stack.push(right);
                     right = right.left;
                 }
             }
