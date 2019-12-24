@@ -24,6 +24,10 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         public String toString() {
             return element.toString();
         }
+
+        public E getElement() {
+            return element;
+        }
     }
 
     private Node<E> root = null;
@@ -181,6 +185,40 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
     }
 
     public void remove(E element) {
+
+        Node node = search(element);
+
+        if (element == null || node == null) {
+            return;
+        }
+
+        if ((node.left != null) && (node.right != null)) {
+            Node min = node.left;
+
+            while (min.right != null) {
+                min = min.right;
+            }
+            min.right = node.right;
+            node.right.parent = min;
+            node.left.parent = null;
+            root = node.left;
+        } else if (node.right != null) {
+            node.right.parent = null;
+            root = node.right;
+        } else if (node.left != null) {
+            node.left.parent = null;
+            root = node.left;
+        } else {
+            root = null;
+        }
+        node.parent = null;
+        node.left = null;
+        node.right = null;
+        node = null;
+        size--;
+    }
+
+    void removeWithoutSplay(E element) {
 
         Node node = search(element);
 
