@@ -17,9 +17,6 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
         this.toElement = toElement;
     }
 
-    public String toString() {
-        return tree.toString();
-    }
 
     private boolean inRange(E e) {
         if ((toElement == null || toElement.compareTo(e) > 0) && (fromElement == null || fromElement.compareTo(e) <= 0)) {
@@ -71,18 +68,12 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     @Override
     public E last() {
-        E last = null;
-        for (E e : tree) {
-            if (inRange(e)) {
-                if (last == null) {
-                    last = e;
-                }
-                if (last.compareTo(e) < 0) {
-                    last = e;
-                }
+        for (E last : tree) {
+            if (inRange(last)) {
+                return last;
             }
         }
-        return last;
+        return null;
     }
 
     @Override
@@ -134,7 +125,10 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
     @NotNull
     @Override
     public <T> T[] toArray(@NotNull T[] ts) {
-        //Работает только при верном размере массива.(Не понял как создать массив T)
+        if (ts.length < size()) {
+            return (T[]) Arrays.copyOf(ts, size(), ts.getClass());
+        }
+
         int count = 0;
         for (E e : tree) {
             if (inRange(e)) {
@@ -157,13 +151,11 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
     @Override
     public boolean remove(Object o) {
         E removeItem = (E) o;
+        int lastSize = size();
         if (inRange(removeItem)) {
-            if (tree.contains(removeItem)) {
-                tree.remove(removeItem);
-                return true;
-            }
+            tree.remove(removeItem);
         }
-        return false;
+        return lastSize > size();
     }
 
     @Override
@@ -190,22 +182,6 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
         }
         return lastSize != size();
     }
-//        //Проверка на успешное добавление всех элементов
-//        for (Object e : collection) {
-//            E elements = (E) e;
-//            if (inRange(elements)) {
-//                if (contains(elements)) {
-//                    return false;
-//                }
-//            } else return false;
-//        }
-//
-//        for (Object e : collection) {
-//            E elements = (E) e;
-//            add(elements);
-//        }
-//        return true;
-//    }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> collection) {
@@ -216,30 +192,8 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
                 remove(elements);
             }
         }
-        if (lastSize != size()) {
-            return true;
-        }
-        return false;
+        return lastSize != size();
     }
-
-
-//        for (Object e : collection) {
-//            E elements = (E) e;
-//            if (inRange(elements)) {
-//                if (contains(elements)) {
-//                    return false;
-//                }
-//            } else return false;
-//        }
-//        for (Object e : collection) {
-//            E elements = (E) e;
-//            if (inRange(elements)) {
-//                if (!contains(elements)) {
-//                    remove(elements);
-//                }
-//            } else return false;
-//        }
-//        return true;
 
 
     @Override
@@ -257,18 +211,6 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
         return false;
     }
 
-
-//        for (Object e : collection) {
-//            E elements = (E) e;
-//            if (inRange(elements)) {
-//                if (contains(elements)) {
-//                    remove(elements);
-//                }
-//            } else return false;
-//        }
-//        return true;
-//    }
-
     @Override
     public void clear() {
         for (E e : tree) {
@@ -280,22 +222,25 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
 
     private class SubSplayTreeSetIterator implements Iterator<E> {
         Iterator<E> iterator = tree.iterator();
+        Deque<E> stack = new ArrayDeque<>();
+
+        SubSplayTreeSetIterator() {
+            while (iterator.hasNext()) {
+                E itNext = iterator.next();
+                if (inRange(itNext)) {
+                    stack.offer(itNext);
+                }
+            }
+        }
 
         @Override
         public boolean hasNext() {
-            return iterator.hasNext();
+            return !stack.isEmpty();
         }
 
         @Override
         public E next() {
-            while (iterator.hasNext()) {
-                E e = iterator.next();
-                if (inRange(e))
-                    return e;
-            }
-            return null;
+            return stack.pop();
         }
     }
-
-
 }

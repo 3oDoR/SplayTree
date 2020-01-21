@@ -41,8 +41,10 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         if (element == null) {
             return false;
         }
-        if (search(element) != null) {
-            return false;
+        for (E e: this) {
+            if (e == element) {
+                return false;
+            }
         }
 
         Node<E> addedElement = root;
@@ -218,40 +220,6 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         size--;
     }
 
-    void removeWithoutSplay(E element) {
-
-        Node node = search(element);
-
-        if (element == null || node == null) {
-            return;
-        }
-
-        if ((node.left != null) && (node.right != null)) {
-            Node min = node.left;
-
-            while (min.right != null) {
-                min = min.right;
-            }
-            min.right = node.right;
-            node.right.parent = min;
-            node.left.parent = null;
-            root = node.left;
-        } else if (node.right != null) {
-            node.right.parent = null;
-            root = node.right;
-        } else if (node.left != null) {
-            node.left.parent = null;
-            root = node.left;
-        } else {
-            root = null;
-        }
-        node.parent = null;
-        node.left = null;
-        node.right = null;
-        node = null;
-        size--;
-    }
-
     @Override
     public boolean isEmpty() {
         return root == null;
@@ -260,42 +228,8 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
 
     @Override
     public boolean contains(Object o) {
-        Node<E> current = root;
-        Node<E> parent = null;
-        E searchElement = (E) o;
-
-        if (root == null || searchElement == null) {
-            return false;
-        }
-        //Если элемент который мы ищем - корень
-        if (searchElement.compareTo(current.element) == 0) {
-            splay(current);
-            return true;
-        }
-
-        while (current.element.compareTo(searchElement) != 0) {
-            if (searchElement.compareTo(current.element) > 0) {
-                parent = current;
-                current = current.right;
-                if (current == null) {
-                    splay(parent);
-                    return false;
-                }
-            }
-            if (searchElement.compareTo(current.element) < 0) {
-                parent = current;
-                current = current.left;
-                if (current == null) {
-                    splay(parent);
-                    return false;
-                }
-            }
-            if (searchElement.compareTo(current.element) == 0) {
-                splay(current);
-                return true;
-            }
-        }
-        return false;
+        E element = (E) o;
+        return search(element) != null;
     }
 
 

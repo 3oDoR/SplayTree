@@ -2,64 +2,26 @@ package main.java.com.spbstu.smirnov;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
-public class SplayTreeVisualization extends JPanel {
-
-    private SplayTreeSet splayTreeSet = new SplayTreeSet();
-    private JTextField insertField = new JTextField(10);
-    private JTextField removeField = new JTextField(10);
-    private JTextField searchField = new JTextField(10);
-    private JLabel insertLabel = new JLabel("Добавление");
-    private JLabel removeLabel = new JLabel("Удаление");
-    private JLabel searchLabel = new JLabel("Поиск");
+public class SplayTreeVisualization extends JFrame {
 
     public static void main(String[] args) {
         SplayTreeVisualization splayTreeVisualization = new SplayTreeVisualization();
         splayTreeVisualization.run();
     }
 
+    JFrame topLevelContainer = new JFrame("SplayTreeSet");
+    SplayTreeSet splayTreeSet = new SplayTreeSet();
+
     private void run() {
-        JFrame topLevelContainer = new JFrame("SplayTreeSet");
-        JPanel panel = new JPanel();
         topLevelContainer.setSize(900, 900);
         centreWindow(topLevelContainer);
         topLevelContainer.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        insertField.addActionListener(actionEvent -> {
-            splayTreeSet.insert(actionEvent.getActionCommand());
-            System.out.println(splayTreeSet.size());
-        });
-
-        removeField.addActionListener(actionEvent -> {
-            splayTreeSet.remove(actionEvent.getActionCommand());
-            System.out.println(splayTreeSet.size());
-        });
-
-        searchField.addActionListener(actionEvent -> {
-            splayTreeSet.contains(actionEvent.getActionCommand());
-            System.out.println(splayTreeSet.size());
-        });
-
-        Box insertBox = Box.createHorizontalBox();
-        Box removeBox = Box.createHorizontalBox();
-        Box searchBox = Box.createHorizontalBox();
-
-        insertLabel.add(insertField);
-        removeLabel.add(removeField);
-        searchLabel.add(searchField);
-        insertBox.add(insertField);
-        insertBox.add(insertLabel);
-        removeBox.add(removeField);
-        removeBox.add(removeLabel);
-        searchBox.add(searchField);
-        searchBox.add(searchLabel);
-        panel.add(insertBox);
-        panel.add(removeBox);
-        panel.add(searchBox);
-
-        topLevelContainer.add(panel);
         topLevelContainer.setVisible(true);
+        initComponent();
     }
 
     private void centreWindow(Window frame) {
@@ -69,4 +31,58 @@ public class SplayTreeVisualization extends JPanel {
         frame.setLocation(x, y);
     }
 
+    private void initComponent() {
+        DrawCircle drawCircle = new DrawCircle(splayTreeSet);
+        JLabel insetLabel = new JLabel("Insert");
+        JLabel removeLabel = new JLabel("Remove");
+        JLabel containsLabel = new JLabel("Contains");
+
+        JTextField insetField = new JTextField(5);
+
+        insetField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                drawCircle.splayTreeSet.insert(Integer.parseInt(actionEvent.getActionCommand()));
+                drawCircle.repaint();
+
+            }
+        });
+
+        JTextField removeField = new JTextField(5);
+        removeField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println(actionEvent.getActionCommand());
+            }
+        });
+
+        JTextField containsField = new JTextField(5);
+        containsField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println(actionEvent.getActionCommand());
+            }
+        });
+
+
+
+
+        drawCircle.add(insetLabel);
+        drawCircle.add(insetField);
+        drawCircle.add(removeLabel);
+        drawCircle.add(removeField);
+        drawCircle.add(containsLabel);
+        drawCircle.add(containsField);
+
+        topLevelContainer.getContentPane().add(BorderLayout.CENTER, drawCircle);
+        topLevelContainer.setVisible(true);
+    }
 }
+
+
+
+
+
+
+
+
