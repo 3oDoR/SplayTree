@@ -41,7 +41,7 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         if (element == null) {
             return false;
         }
-        for (E e: this) {
+        for (E e : this) {
             if (e == element) {
                 return false;
             }

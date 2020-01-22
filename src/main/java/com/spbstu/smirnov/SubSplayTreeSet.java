@@ -125,18 +125,23 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
     @NotNull
     @Override
     public <T> T[] toArray(@NotNull T[] ts) {
-        if (ts.length < size()) {
-            return (T[]) Arrays.copyOf(ts, size(), ts.getClass());
-        }
-
+        T[] mas = (T[]) Arrays.copyOf(ts, size(), ts.getClass());
         int count = 0;
         for (E e : tree) {
             if (inRange(e)) {
-                ts[count] = (T) e;
+                mas[count] = (T) e;
                 count++;
             }
         }
-        return ts;
+        Arrays.sort(mas);
+        if (ts.length < size()) {
+            return mas;
+        } else {
+            for (int i = 0; i < mas.length; i++) {
+                ts[i] = mas[i];
+            }
+            return ts;
+        }
     }
 
 
@@ -227,6 +232,7 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
         SubSplayTreeSetIterator() {
             while (iterator.hasNext()) {
                 E itNext = iterator.next();
+                System.out.println(itNext);
                 if (inRange(itNext)) {
                     stack.offer(itNext);
                 }
@@ -241,6 +247,13 @@ public class SubSplayTreeSet<E extends Comparable<E>> implements SortedSet<E> {
         @Override
         public E next() {
             return stack.pop();
+        }
+
+        @Override
+        public String toString() {
+            return
+                    "iterator=" + iterator +
+                            ", stack=" + stack;
         }
     }
 }
