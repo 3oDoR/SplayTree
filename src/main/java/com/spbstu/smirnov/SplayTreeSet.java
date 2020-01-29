@@ -41,22 +41,22 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         if (element == null) {
             return false;
         }
-        for (E e : this) {
-            if (e == element) {
-                return false;
-            }
-        }
 
         Node<E> addedElement = root;
         Node<E> parent = null;
 
         while (addedElement != null) {
+
+            if (element == addedElement.element) {
+                return false;
+            }
             parent = addedElement;
             if (element.compareTo(parent.element) > 0) {
                 addedElement = addedElement.right;
             } else {
                 addedElement = addedElement.left;
             }
+
         }
         addedElement = new Node<>(null, null, parent, element);
 
@@ -156,11 +156,12 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
         if (root == null || searchElement == null) {
             return null;
         }
-        //Если элемент который мы ищем - корень
-        if (searchElement.compareTo(current.element) == 0) {
-            splay(current);
-            return current;
-        }
+
+//        //Если элемент который мы ищем - корень
+//        if (searchElement.compareTo(current.element) == 0) {
+//            return current;
+//        }
+
         while (current.element.compareTo(searchElement) != 0) {
             if (searchElement.compareTo(current.element) > 0) {
                 parent = current;
@@ -183,7 +184,7 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
                 return current;
             }
         }
-        return null;
+        return current;
     }
 
     public void remove(E element) {
@@ -316,13 +317,14 @@ public class SplayTreeSet<E extends Comparable<E>> extends AbstractSet<E> implem
 
         @Override
         public E next() {
-            Node<E> node = stack.pop();
+            Node<E> node = stack.pollLast();
             next = node;
+
 
             if (node.right != null) {
                 Node<E> right = node.right;
                 while (right != null) {
-                    stack.push(right);
+                    stack.addLast(right);
                     right = right.left;
                 }
             }

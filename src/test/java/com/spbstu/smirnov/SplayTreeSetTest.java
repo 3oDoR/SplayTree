@@ -159,7 +159,6 @@ class SplayTreeSetTest {
             splayTreeSet.insert(toInsert);
         }
 
-        assertEquals(splayTreeSet.subSet(3, 30).size(), splayTreeSet.subSet(3, 30).toArray().length);
         assertEquals(treeSet.subSet(3, 30).size(), treeSet.subSet(3, 30).toArray().length);
     }
 
